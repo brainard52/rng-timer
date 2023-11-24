@@ -20,12 +20,16 @@ body {
 	text-align: center;
 }
 
-.genthree,
+#box,
 .options {
 	margin: 20px 0;
 	padding: 20px;
 	background-color: #fff;
 	box-shadow: 0 1px 3px 1px #ccc;
+}
+
+.alert {
+ background-color: #ff7f7f !important;
 }
 
 .genthree {

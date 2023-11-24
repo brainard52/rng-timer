@@ -17,6 +17,7 @@ var countdownCheckbox = document.getElementById('countdown-checkbox');
 var soundTypeDropdown = document.getElementById('sound-type-dropdown');
 var numSoundsInput = document.getElementById('num-sounds-input');
 var soundsIntervalInput = document.getElementById('sounds-interval-input');
+var box = document.getElementById('box')
 
 var audios = {
   tick: new Audio('tick.wav'),
@@ -105,7 +106,6 @@ class Timer {
   }
 }
 
-
 var beforeResetTimer = new Timer({
   onStart () {
     startButton.innerHTML = 'Stop';
@@ -115,9 +115,16 @@ var beforeResetTimer = new Timer({
   },
   onChange () {
     if (!beforeTargetTimer.isActive()) {
-      timeRemaining.innerHTML = getFormattedTime(this.getTimeRemaining());
+      var timeRemainingVal = this.getTimeRemaining();
+      timeRemaining.innerHTML = getFormattedTime(timeRemainingVal);
+      if (Math.floor(timeRemainingVal/ONE_SECOND_MS) % 2 == 1 && timeRemainingVal / ONE_SECOND_MS < 15) {
+        box.setAttribute("class", "alert");
+      } else {
+        box.setAttribute("class", "");
+      }
       if (!this.isActive()) {
         estimatedTime.innerHTML = estimatedTimeVal;
+        box.setAttribute("class", "");
       }
     }
   },
@@ -134,8 +141,15 @@ var beforeTargetTimer = new Timer({
     timeRemaining.innerHTML = getFormattedTime(beforeResetTimer.getTotalTime());
   },
   onChange () {
+      var timeRemainingVal = this.getTimeRemaining();
+      timeRemaining.innerHTML = getFormattedTime(timeRemainingVal);
+      if (Math.floor(timeRemainingVal/ONE_SECOND_MS) % 2 == 1 && timeRemainingVal / ONE_SECOND_MS < 15) {
+        box.setAttribute("class", "alert");
+      } else {
+        box.setAttribute("class", "");
+      }
     if (this.isActive()) {
-      timeRemaining.innerHTML = getFormattedTime(this.getTimeRemaining());
+      timeRemaining.innerHTML = getFormattedTime(timeRemainingVal);
     }
   },
   totalTime: msToTarget
@@ -165,9 +179,6 @@ function updateTimes () {
   beforeResetTimer.setTotalTime(+secondsBeforeReset.value * ONE_SECOND_MS);
   beforeTargetTimer.setTotalTime(msToTarget);
   estimatedTimeVal = Math.floor((secondsBeforeReset.value * ONE_SECOND_MS + msToTarget) / ONE_MINUTE_MS);
-  console.log("secondsBeforeReset: ", secondsBeforeReset.value)
-  console.log("msToTarget: ", msToTarget)
-  console.log("estimatedTimeVal: ", estimatedTimeVal)
   if (!beforeResetTimer.isActive() && !beforeTargetTimer.isActive()) {
     estimatedTime.innerHTML = estimatedTimeVal;
   }
@@ -181,8 +192,6 @@ function calibrateDelay () {
 
   if (Number.isFinite(targetFrame) && Number.isFinite(frameHit) && frameHit != 0 && Number.isFinite(delay)) {
     delayInput.value = Math.floor(delay + ((targetFrame - frameHit) / FPS) / 2 * ONE_SECOND_MS);
-    console.log(Math.floor(delay + ((targetFrame - frameHit) / FPS) / 2 * ONE_SECOND_MS));
-    console.log("frameHit: ", frameHit);
   }
   updateTimes();
 }

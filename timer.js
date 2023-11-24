@@ -1,27 +1,18 @@
 'use strict';
 
-var FPS = 59.8261;
 var TICK_MS = 10;
-var MINIMUM_TIME_MS = 14000;
 var ONE_MINUTE_MS = 60000;
+var ONE_SECOND_MS = 1000;
+var FPS = 0;
 
-var gen5CalibrationInput = document.getElementById('gen-5-calibration-input');
-var gen5TargetSecondsInput = document.getElementById('gen-5-target-seconds-input');
-var gen5SecondHitInput = document.getElementById('gen-5-second-hit-input');
-var gen5StartButton = document.getElementById('gen-5-start-button');
-var gen5TimeRemaining = document.getElementById('gen-5-time-remaining');
-var gen5MinutesBefore = document.getElementById('gen-5-minutes-before');
-
-var gen4CalibratedDelayInput = document.getElementById('gen-4-calibrated-delay-input');
-var gen4CalibratedSecondsInput = document.getElementById('gen-4-calibrated-seconds-input');
-var gen4TargetDelayInput = document.getElementById('gen-4-target-delay-input');
-var gen4TargetSecondsInput = document.getElementById('gen-4-target-seconds-input');
-var gen4DelayHitInput = document.getElementById('gen-4-delay-hit-input');
-var gen4StartButton = document.getElementById('gen-4-start-button');
-var gen4TimeRemaining1 = document.getElementById('gen-4-time-remaining-1');
-var gen4TimeRemaining2 = document.getElementById('gen-4-time-remaining-2');
-var gen4MinutesBefore = document.getElementById('gen-4-minutes-before');
-
+var secondsBeforeReset = document.getElementById("seconds-before-reset");
+var delayInput = document.getElementById("delay");
+var targetFrameInput = document.getElementById("target-frame");
+var timeRemaining = document.getElementById("time-remaining");
+var estimatedTime = document.getElementById("estimated-time");
+var frameHitInput = document.getElementById("frame-hit");
+var startButton = document.getElementById("start-button");
+var consoleTypeDropdown = document.getElementById('console-type');
 var countdownCheckbox = document.getElementById('countdown-checkbox');
 var soundTypeDropdown = document.getElementById('sound-type-dropdown');
 var numSoundsInput = document.getElementById('num-sounds-input');
@@ -114,150 +105,86 @@ class Timer {
   }
 }
 
-var gen5Timer = new Timer({
+
+var beforeResetTimer = new Timer({
   onStart () {
-    gen5StartButton.innerHTML = 'Stop';
+    startButton.innerHTML = 'Stop';
   },
   onStop () {
-    gen5StartButton.innerHTML = 'Start';
-    gen5MinutesBefore.innerHTML = Math.floor(this.getTotalTime() / ONE_MINUTE_MS);
+    beforeTargetTimer.start();
   },
   onChange () {
-    gen5TimeRemaining.innerHTML = getFormattedTime(this.getTimeRemaining());
-  },
-  totalTime: calculateGen5TotalTime()
-});
-
-gen5Timer.onChange();
-
-var initialGen4Times = calculateGen4Times();
-var gen4MinutesBeforeVal = Math.floor((initialGen4Times[0] + initialGen4Times[1]) / ONE_MINUTE_MS);
-gen4MinutesBefore.innerHTML = gen4MinutesBeforeVal;
-
-var gen4Timer1 = new Timer({
-  onStart () {
-    gen4StartButton.innerHTML = 'Stop';
-  },
-  onStop () {
-    gen4Timer2.start();
-  },
-  onChange () {
-    if (!gen4Timer2.isActive()) {
-      gen4TimeRemaining1.innerHTML = getFormattedTime(this.getTimeRemaining());
+    if (!beforeTargetTimer.isActive()) {
+      timeRemaining.innerHTML = getFormattedTime(this.getTimeRemaining());
       if (!this.isActive()) {
-        gen4MinutesBefore.innerHTML = gen4MinutesBeforeVal;
+        estimatedTime.innerHTML = estimatedTimeVal;
       }
     }
   },
-  totalTime: initialGen4Times[0]
+  totalTime: msToTarget
 });
 
-var gen4Timer2 = new Timer({
+var beforeTargetTimer = new Timer({
   onStart () {
-    gen4TimeRemaining1.innerHTML = getFormattedTime(this.getTotalTime());
-    gen4TimeRemaining2.innerHTML = getFormattedTime(0);
+    timeRemaining.innerHTML = getFormattedTime(this.getTotalTime());
   },
   onStop () {
-    gen4StartButton.innerHTML = 'Start';
-    gen4MinutesBefore.innerHTML = gen4MinutesBeforeVal;
-    gen4TimeRemaining1.innerHTML = getFormattedTime(gen4Timer1.getTotalTime());
-    gen4TimeRemaining2.innerHTML = getFormattedTime(this.getTotalTime());
+    startButton.innerHTML = 'Start';
+    estimatedTime.innerHTML = estimatedTimeVal;
+    timeRemaining.innerHTML = getFormattedTime(beforeResetTimer.getTotalTime());
   },
   onChange () {
     if (this.isActive()) {
-      gen4TimeRemaining1.innerHTML = getFormattedTime(this.getTimeRemaining());
+      timeRemaining.innerHTML = getFormattedTime(this.getTimeRemaining());
     }
   },
-  totalTime: initialGen4Times[1]
+  totalTime: msToTarget
 });
 
-gen4Timer1.onChange();
-gen4TimeRemaining2.innerHTML = getFormattedTime(gen4Timer2.getTotalTime());
 
 // eslint-disable-next-line
-function toggleGen4Timers () {
-  if (gen4Timer1.isActive() || gen4Timer2.isActive()) {
-    gen4Timer1.stop();
-    gen4Timer2.stop();
+function toggleTimers () {
+  if (beforeResetTimer.isActive() || beforeTargetTimer.isActive()) {
+    beforeResetTimer.stop();
+    beforeTargetTimer.stop();
   } else {
-    gen4Timer1.start();
+    beforeResetTimer.start();
   }
 }
 
-function toDelay (delay) {
-  return Math.round(delay * FPS);
+function calcMsToTarget () {
+  var delay = +delayInput.value;
+  var targetFrame = +targetFrameInput.value;
+  var msToTarget = delay + targetFrame / FPS * ONE_SECOND_MS;
+  return msToTarget;
 }
 
-function toMs (ms) {
-  return Math.round(ms / FPS);
-}
-
-function getGen5Time (calibration, targetSec) {
-  return 1000 * targetSec + toMs(1000 * calibration) + 200;
-}
-
-function getGen5CalibrationOffset (targetSec, result) {
-  return toDelay(targetSec === result ? 0 : targetSec - result + (result > targetSec ? 0.5 : -0.5));
-}
-
-function calculateGen5TotalTime () {
-  var time = getGen5Time(+gen5CalibrationInput.value, +gen5TargetSecondsInput.value);
-  if (time < MINIMUM_TIME_MS) {
-    time += ONE_MINUTE_MS;
-  }
-  return time;
-}
-
-function updateGen5TotalTime () {
-  gen5Timer.setTotalTime(calculateGen5TotalTime());
-  if (!gen5Timer.isActive()) {
-    gen5MinutesBefore.innerHTML = Math.floor(gen5Timer.getTotalTime() / ONE_MINUTE_MS);
+// eslint-disable-next-line
+function updateTimes () {
+  var msToTarget = calcMsToTarget();
+  beforeResetTimer.setTotalTime(+secondsBeforeReset.value * ONE_SECOND_MS);
+  beforeTargetTimer.setTotalTime(msToTarget);
+  estimatedTimeVal = Math.floor((secondsBeforeReset.value * ONE_SECOND_MS + msToTarget) / ONE_MINUTE_MS);
+  console.log("secondsBeforeReset: ", secondsBeforeReset.value)
+  console.log("msToTarget: ", msToTarget)
+  console.log("estimatedTimeVal: ", estimatedTimeVal)
+  if (!beforeResetTimer.isActive() && !beforeTargetTimer.isActive()) {
+    estimatedTime.innerHTML = estimatedTimeVal;
   }
 }
 
 // eslint-disable-next-line
-function updateGen5Calibration () {
-  var targetSec = +gen5TargetSecondsInput.value;
-  var secondHit = +gen5SecondHitInput.value;
-  if (Number.isFinite(targetSec) && Number.isFinite(secondHit)) {
-    gen5CalibrationInput.value = +gen5CalibrationInput.value + getGen5CalibrationOffset(targetSec, secondHit);
-    updateGen5TotalTime();
-  }
-}
+function calibrateDelay () {
+  var targetFrame = +targetFrameInput.value;
+  var frameHit = +frameHitInput.value;
+  var delay = +delayInput.value;
 
-function calculateGen4Times () {
-  var targetSec = +gen4TargetSecondsInput.value;
-  var targetDelay = +gen4TargetDelayInput.value;
-  var calibratedDelay = +gen4CalibratedDelayInput.value;
-  var calibratedSeconds = +gen4CalibratedSecondsInput.value;
-  var secondTimeMs = toMs(targetDelay * 1000 - calibratedDelay * 1000) + calibratedSeconds * 1000;
-  var firstTimeMs = ((targetSec * 1000 - secondTimeMs) % ONE_MINUTE_MS + ONE_MINUTE_MS) % ONE_MINUTE_MS + 200;
-  if (firstTimeMs < MINIMUM_TIME_MS) {
-    firstTimeMs += ONE_MINUTE_MS;
+  if (Number.isFinite(targetFrame) && Number.isFinite(frameHit) && frameHit != 0 && Number.isFinite(delay)) {
+    delayInput.value = Math.floor(delay + ((targetFrame - frameHit) / FPS) / 2 * ONE_SECOND_MS);
+    console.log(Math.floor(delay + ((targetFrame - frameHit) / FPS) / 2 * ONE_SECOND_MS));
+    console.log("frameHit: ", frameHit);
   }
-  return [firstTimeMs, secondTimeMs];
-}
-
-// eslint-disable-next-line
-function updateGen4Times () {
-  var totalTimes = calculateGen4Times();
-  gen4Timer1.setTotalTime(totalTimes[0]);
-  gen4Timer2.setTotalTime(totalTimes[1]);
-  gen4MinutesBeforeVal = Math.floor((totalTimes[0] + totalTimes[1]) / ONE_MINUTE_MS);
-  if (!gen4Timer1.isActive() && !gen4Timer2.isActive()) {
-    gen4TimeRemaining2.innerHTML = getFormattedTime(gen4Timer2.getTotalTime());
-    gen4MinutesBefore.innerHTML = gen4MinutesBeforeVal;
-  }
-}
-
-// eslint-disable-next-line
-function updateGen4Calibration () {
-  var targetDelay = +gen4TargetDelayInput.value;
-  var delayHit = +gen4DelayHitInput.value;
-  if (Number.isFinite(targetDelay) && Number.isFinite(delayHit)) {
-    gen4CalibratedDelayInput.value = +gen4CalibratedDelayInput.value + Math.round((delayHit - targetDelay) / 2)
-  }
-  updateGen4Times();
+  updateTimes();
 }
 
 // eslint-disable-next-line
@@ -267,3 +194,15 @@ function updateCountdownOptions () {
   numSoundsInput.disabled = isDisabled;
   soundsIntervalInput.disabled = isDisabled;
 }
+
+function updateFPS () {
+  FPS = +consoleTypeDropdown.value;
+  updateTimes()
+}
+
+updateFPS()
+updateTimes()
+beforeResetTimer.onChange();
+var msToTarget = calcMsToTarget();
+var estimatedTimeVal = Math.floor((secondsBeforeReset.value * ONE_SECOND_MS + msToTarget) / ONE_MINUTE_MS);
+estimatedTime.innerHTML = estimatedTimeVal;

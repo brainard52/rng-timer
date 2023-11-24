@@ -20,8 +20,7 @@ body {
 	text-align: center;
 }
 
-.genfive,
-.genfour,
+.genthree,
 .options {
 	margin: 20px 0;
 	padding: 20px;
@@ -29,18 +28,13 @@ body {
 	box-shadow: 0 1px 3px 1px #ccc;
 }
 
-.genfive,
-.genfour {
+.genthree {
 	width: 400px;
 	height: 350px;
 }
 
-.genfive {
-	float: left;
-}
-
-.genfour {
-	float: right;
+.genthree {
+	float: none;
 }
 
 .options {
@@ -68,9 +62,6 @@ body {
 	width: 83px;
 }
 
-#gen-5-time-remaining,
-#gen-4-time-remaining-1,
-#gen-4-time-remaining-2 {
-	padding: 10px 0;
+#time-remaining {
 	color: #f00;
 }

@@ -259,7 +259,7 @@ class TimerChain {
       var hit = Number(this.frameHitElements[i].value);
       var FPS = Number(consoleTypeDropdown.value)
 
-      this.delayElements[i].value = delay + Math.floor(ONE_SECOND_MS*(target-hit)/FPS/2);
+      this.delayElements[i].value = delay + Math.floor(ONE_SECOND_MS*(target-hit)/FPS);
       this.frameHitElements[i].value = "";
     }
     this.updateTimes()

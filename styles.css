@@ -20,7 +20,8 @@ body {
 	text-align: center;
 }
 
-#box,
+#one-timer,
+#two-timers,
 .options {
 	margin: 20px 0;
 	padding: 20px;
@@ -32,15 +33,19 @@ body {
  background-color: #ff7f7f !important;
 }
 
-.genthree {
+#one-timer{
 	width: 400px;
 	height: 350px;
+	float: left;
+
 }
 
-.genthree {
-	float: none;
-}
+#two-timers{
+	width: 400px;
+	height: 350px;
+	float: right;
 
+}
 .options {
 	clear: both;
 }
@@ -66,6 +71,7 @@ body {
 	width: 83px;
 }
 
-#time-remaining {
+#one-timer-time-remaining,
+#two-timers-time-remaining {
 	color: #f00;
 }

@@ -1,60 +1,63 @@
 <!DOCTYPE html>
-<title>Gen 3 RNG Timer</title>
-<link rel="stylesheet" type="text/css" href="styles.css" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+ <title>Gen 3 RNG Timer</title>
+ <link rel="stylesheet" type="text/css" href="styles.css" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏱️</text></svg>">
+</head>
 <body>
  <div id="wrapper">
   <div id="one-timer">
-    <h1 class="head">One timer</h1>
-    Before reset (s) <input id="one-timer-seconds-before-reset" type="number" oninput="oneTimer.updateTimes()" value=15 /><br>
-    Delay (ms) <input id="one-timer-delay" type="number" oninput="oneTimer.updateTimes()" value=500 /><br>
-    Target Frame <input id="one-timer-target-frame" type="number" oninput="oneTimer.updateTimes()" value=14000 /><br><br>
-    <h3 id="one-timer-time-remaining">dingus</h3>
-    Est. time (m): <span id="one-timer-estimated-time"></span><br><br>
-    Frame hit <input id="one-timer-frame-hit" type="number" /><br>
-    <button id="one-timer-start-button" class="start" onclick="oneTimer.toggle()">Start</button>
-    <button id="one-timer-update-button" class="update" onclick="oneTimer.calibrateDelays()">Update</button>
+   <h1 class="head">One timer</h1>
+   Before reset (s) <input id="one-timer-seconds-before-reset" type="number" oninput="oneTimer.updateTimes()" value=15 /><br>
+   Delay (ms) <input id="one-timer-delay" type="number" oninput="oneTimer.updateTimes()" value=500 /><br>
+   Target Frame <input id="one-timer-target-frame" type="number" oninput="oneTimer.updateTimes()" value=14000 /><br><br>
+   <h3 id="one-timer-time-remaining">dingus</h3>
+   Est. time (m): <span id="one-timer-estimated-time"></span><br><br>
+   Frame hit <input id="one-timer-frame-hit" type="number" /><br>
+   <button id="one-timer-start-button" class="start" onclick="oneTimer.toggle()">Start</button>
+   <button id="one-timer-update-button" class="update" onclick="oneTimer.calibrateDelays()">Update</button>
   </div>
   <div id="two-timers">
-    <h1 class="head">Two timers</h1>
-    Before reset (s) <input id="two-timers-seconds-before-reset" type="number" oninput="twoTimers.updateTimes()" value=15 /><br>
-    Timer 1 Delay (ms) <input id="two-timers-delay-1" type="number" oninput="twoTimers.updateTimes()" value=500 /><br>
-    Target 1 Frame <input id="two-timers-target-1-frame" type="number" oninput="twoTimers.updateTimes()" value=14000 /><br>
-    Timer 2 Delay (ms) <input id="two-timers-delay-2" type="number" oninput="twoTimers.updateTimes()" value=500 /><br>
-    Target 2 Frame <input id="two-timers-target-2-frame" type="number" oninput="twoTimers.updateTimes()" value=14000 /><br><br>
-    <h3 id="two-timers-time-remaining">dingus</h3>
-    Est. time (m): <span id="two-timers-estimated-time"></span><br><br>
-    Frame hit 1 <input id="two-timers-frame-hit-1" type="number" /><br>
-    Frame hit 2 <input id="two-timers-frame-hit-2" type="number" /><br>
-    <button id="two-timers-start-button" class="start" onclick="twoTimers.toggle()">Start</button>
-    <button id="two-timers-update-button" class="update" onclick="twoTimers.calibrateDelays()">Update</button>
+   <h1 class="head">Two timers</h1>
+   Before reset (s) <input id="two-timers-seconds-before-reset" type="number" oninput="twoTimers.updateTimes()" value=15 /><br>
+   Timer 1 Delay (ms) <input id="two-timers-delay-1" type="number" oninput="twoTimers.updateTimes()" value=500 /><br>
+   Target 1 Frame <input id="two-timers-target-1-frame" type="number" oninput="twoTimers.updateTimes()" value=14000 /><br>
+   Timer 2 Delay (ms) <input id="two-timers-delay-2" type="number" oninput="twoTimers.updateTimes()" value=500 /><br>
+   Target 2 Frame <input id="two-timers-target-2-frame" type="number" oninput="twoTimers.updateTimes()" value=14000 /><br><br>
+   <h3 id="two-timers-time-remaining">dingus</h3>
+   Est. time (m): <span id="two-timers-estimated-time"></span><br><br>
+   Frame hit 1 <input id="two-timers-frame-hit-1" type="number" /><br>
+   Frame hit 2 <input id="two-timers-frame-hit-2" type="number" /><br>
+   <button id="two-timers-start-button" class="start" onclick="twoTimers.toggle()">Start</button>
+   <button id="two-timers-update-button" class="update" onclick="twoTimers.calibrateDelays()">Update</button>
   </div>
   <div class="options">
-    <h3 class="head">Options</h3>
-    <input type="checkbox" id="countdown-checkbox" checked onclick="updateCountdownOptions()"></input>
-    Play a <select id="sound-type-dropdown">
-      <option value="tick">tick</option>
-      <option value="beep">beep</option>
-      <option value="pop">pop</option>
-      <option value="ding">ding</option>
-    </select>
-    sound
-    <input type="number" id="num-sounds-input" style="width:3em;" value=6 />
-    times at an interval of
-    <input type="number" id="sounds-interval-input" style="width:4em;" value=500>
-    milliseconds as the timer expires
-    <br>
-    <input type="checkbox" id="flash-checkbox" checked onclick="updateCountdownOptions()"></input>
-    Flash well in advance to alert before timer ends
-    <br>
-    Console type <select id="console-type" onchange="updateFPS()">
-     <option type=number value=59.7275>GBA (59.7275 FPS)</option>
-     <option type=number value=59.6555>NDS	(59.6555 FPS)</option>
-    </select><br>
-    Forked from <a href="https://not-an-aardvark.github.io/rng-timer/">https://not-an-aardvark.github.io/rng-timer/</a> 
+   <h3 class="head">Options</h3>
+   <input type="checkbox" id="countdown-checkbox" checked onclick="updateCountdownOptions()"></input>
+   Play a <select id="sound-type-dropdown">
+    <option value="tick">tick</option>
+    <option value="beep">beep</option>
+    <option value="pop">pop</option>
+    <option value="ding">ding</option>
+   </select>
+   sound
+   <input type="number" id="num-sounds-input" style="width:3em;" value=6 />
+   times at an interval of
+   <input type="number" id="sounds-interval-input" style="width:4em;" value=500>
+   milliseconds as the timer expires
+   <br>
+   <input type="checkbox" id="flash-checkbox" checked onclick="updateCountdownOptions()"></input>
+   Flash well in advance to alert before timer ends
+   <br>
+   Console type <select id="console-type" onchange="updateFPS()">
+    <option type=number value=59.7275>GBA (59.7275 FPS)</option>
+    <option type=number value=59.6555>NDS	(59.6555 FPS)</option>
+   </select><br>
+   Forked from <a href="https://not-an-aardvark.github.io/rng-timer/">https://not-an-aardvark.github.io/rng-timer/</a> 
   </div>
  </div>
-  <script type="text/javascript" src="https://cdn.rawgit.com/turuslan/HackTimer/5c86bde027e6a328fafc53ed18bdcf1f66be00bc/HackTimer.min.js?raw=true"></script>
-  <script type="text/javascript" src="howler.min.js"></script>
-  <script type="text/javascript" src="timer.js"></script>
+ <script type="text/javascript" src="https://cdn.rawgit.com/turuslan/HackTimer/5c86bde027e6a328fafc53ed18bdcf1f66be00bc/HackTimer.min.js?raw=true"></script>
+ <script type="text/javascript" src="howler.min.js"></script>
+ <script type="text/javascript" src="timer.js"></script>
 </body>

@@ -33,10 +33,10 @@ var numSoundsInput = document.getElementById("num-sounds-input");
 var soundsIntervalInput = document.getElementById("sounds-interval-input");
 
 var audios = {
-  tick: new Audio('tick.wav'),
-  beep: new Audio('beep.wav'),
-  pop: new Audio('pop.wav'),
-  ding: new Audio('ding.wav')
+  tick: new Howl({src: ['tick.wav']}),
+  beep: new Howl({src: ['beep.wav']}),
+  pop: new Howl({src: ['pop.wav']}),
+  ding: new Howl({src: ['ding.wav']})
 };
 
 function zeroPadNum(num, length){
@@ -258,7 +258,8 @@ class TimerChain {
       var target = Number(this.targetElements[i].value);
       var hit = Number(this.frameHitElements[i].value);
       var FPS = Number(consoleTypeDropdown.value)
-      this.delayElements[i].value = delay + Math.floor((FPS*(target-hit)/2)/ONE_SECOND_MS);
+
+      this.delayElements[i].value = delay + Math.floor(ONE_SECOND_MS*(target-hit)/FPS/2);
       this.frameHitElements[i].value = "";
     }
     this.updateTimes()

@@ -16,7 +16,7 @@ var two_timers = document.getElementById('two-timers');
 var t2_secondsBeforeReset = document.getElementById("two-timers-seconds-before-reset");
 var t2_delayInput1 = document.getElementById("two-timers-delay-1");
 var t2_targetFrameInput1 = document.getElementById("two-timers-target-1-frame");
-var t2_delayInput2 = document.getElementById("two-timers-delay-1" );
+var t2_delayInput2 = document.getElementById("two-timers-delay-2" );
 var t2_targetFrameInput2 = document.getElementById("two-timers-target-2-frame");
 var t2_timeRemaining = document.getElementById("two-timers-time-remaining");
 var t2_estimatedTime = document.getElementById("two-timers-estimated-time");
@@ -251,13 +251,13 @@ class TimerChain {
   }
 
   calibrateDelays() {
-    for(var i = 0; i < this.frameHitElements.length; i++){
+    for(let i = 0; i < this.frameHitElements.length; i++){
       if(this.frameHitElements[i].value == ""){continue;}
 
-      var delay = Number(this.delayElements[i].value);
-      var target = Number(this.targetElements[i].value);
-      var hit = Number(this.frameHitElements[i].value);
-      var FPS = Number(consoleTypeDropdown.value)
+      let delay = Number(this.delayElements[i].value);
+      let target = Number(this.targetElements[i].value);
+      let hit = Number(this.frameHitElements[i].value);
+      let FPS = Number(consoleTypeDropdown.value)
 
       this.delayElements[i].value = delay + Math.floor(ONE_SECOND_MS*(target-hit)/FPS);
       this.frameHitElements[i].value = "";

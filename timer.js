@@ -77,10 +77,11 @@ class Timer {
       this._stopPoint = Date.now() + this._totalTime;
       this._audioTimers = [];
       if(countdownCheckbox.checked){
+        this._audioTimers = [];
         for(var i = 0; i < Number(numSoundsInput.value); i++){
-          this._audioTimers.push(setTimeout(function(){
-            audios[soundTypeDropdown.value].play();
-          }, this._totalTime - i * soundsIntervalInput.value));
+          if(i * soundsIntervalInput.value < this._totalTime){
+            this._audioTimers.push(i * soundsIntervalInput.value);
+          }
         }
       }
       this._intervalTimer = setInterval(this._tick.bind(this), TICK_MS);
@@ -92,7 +93,6 @@ class Timer {
 
   stop(){
     if(this.isActive()){
-      this._audioTimers.forEach(clearTimeout);
       this._audioTimers = [];
       clearInterval(this._intervalTimer);
       clearTimeout(this._stopTimer);
@@ -122,6 +122,10 @@ class Timer {
   _tick(){
     if(this._intervalTimer){
       this._timeRemaining = this._stopPoint - Date.now();
+      if(Math.floor(this._timeRemaining/12) <= Math.floor(this._audioTimers[this._audioTimers.length-1]/12)){
+        audios[soundTypeDropdown.value].play();
+        this._audioTimers.pop();
+      }
       this.onChange();
     }
   }

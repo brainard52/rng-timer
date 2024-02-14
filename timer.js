@@ -45,7 +45,7 @@ function zeroPadNum(num, length){
 }
 
 function getFormattedTime(ms){
-  return zeroPadNum(Math.floor(ms / 1000), 1) + ':' + zeroPadNum(Math.floor(ms % 1000 / TICK_MS), 3);
+  return zeroPadNum(Math.floor(ms / ONE_SECOND_MS), 1) + ':' + zeroPadNum(Math.floor(ms % ONE_SECOND_MS), 3);
 }
 
 var noop = function(){};

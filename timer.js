@@ -122,7 +122,7 @@ class Timer {
   _tick(){
     if(this._intervalTimer){
       this._timeRemaining = this._stopPoint - performance.now();
-      if(Math.floor(this._timeRemaining/12) <= Math.floor(this._audioTimers[this._audioTimers.length-1]/12)){
+      if(Math.floor(this._timeRemaining/8) <= Math.floor(this._audioTimers[this._audioTimers.length-1]/8)){
         audios[soundTypeDropdown.value].play();
         this._audioTimers.pop();
       }

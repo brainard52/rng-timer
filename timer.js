@@ -45,7 +45,7 @@ function zeroPadNum(num, length){
 }
 
 function getFormattedTime(ms){
-  return zeroPadNum(Math.floor(ms / 1000), 2) + ':' + zeroPadNum(Math.floor(ms % 1000 / TICK_MS), 2);
+  return zeroPadNum(Math.floor(ms / 1000), 1) + ':' + zeroPadNum(Math.floor(ms % 1000 / TICK_MS), 3);
 }
 
 var noop = function(){};
@@ -74,7 +74,7 @@ class Timer {
 
   start(){
     if(!this.isActive()){
-      this._stopPoint = Date.now() + this._totalTime;
+      this._stopPoint = performance.now() + this._totalTime;
       this._audioTimers = [];
       if(countdownCheckbox.checked){
         this._audioTimers = [];
@@ -121,7 +121,7 @@ class Timer {
 
   _tick(){
     if(this._intervalTimer){
-      this._timeRemaining = this._stopPoint - Date.now();
+      this._timeRemaining = this._stopPoint - performance.now();
       if(Math.floor(this._timeRemaining/12) <= Math.floor(this._audioTimers[this._audioTimers.length-1]/12)){
         audios[soundTypeDropdown.value].play();
         this._audioTimers.pop();

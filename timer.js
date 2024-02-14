@@ -1,4 +1,4 @@
-var TICK_MS = 10;
+var TICK_MS = 2;
 var ONE_SECOND_MS = 1000;
 
 // one timer

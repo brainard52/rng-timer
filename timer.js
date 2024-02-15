@@ -222,7 +222,7 @@ class TimerChain {
       timeRemainingVal = this.timers[this.currentTimer].getTimeRemaining();
     }
     this.timeRemaining.innerHTML = getFormattedTime(timeRemainingVal);
-    if(flash && Math.floor(timeRemainingVal/ONE_SECOND_MS*2) % 2 != 0 && timeRemainingVal / ONE_SECOND_MS < 20){
+    if(flash && Math.floor(timeRemainingVal/ONE_SECOND_MS*2) % 2 == 0 && timeRemainingVal / ONE_SECOND_MS < 20){
       this.mainElement.setAttribute("class", "alert");
     } else {
       this.mainElement.setAttribute("class", "");
